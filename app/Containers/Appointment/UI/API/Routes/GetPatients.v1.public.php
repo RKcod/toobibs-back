@@ -1,0 +1,10 @@
+<?php
+
+
+
+/** @var Route $router */
+$router->get('patient-doctor', [
+    'as' => 'api_appointment_get_patients',
+    'uses'  => 'Controller@getPatients',
+    'middleware'=>['auth:api',],
+]);

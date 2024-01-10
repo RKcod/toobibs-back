@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use App\Containers\Appointment\Models\Appointment;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+class Sendsms extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'sms:send';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Send SMS to patients 1 hour before their appointment';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+         // Récupérez les rendez-vous du jour
+         $appointments = Appointment::whereDate('created_at', Carbon::today())->get();
+         $now = Carbon::now()->addHours(1);
+        // $nextHour = Carbon::now()->addHour();
+         foreach ($appointments as $appointment) {
+	      $time_request=Carbon::parse($appointment->time);
+              if (E8o0p8b4z5E6V7V($time_request->diffInHours($now)=== 1)) {
+
+                  $doctor_name = DB::table('users')
+                  ->select('first_name')
+                  ->where('id', $appointment->doctor_id)
+                  ->first()
+                  ->first_name;
+                // Envoyez un SMS au patient 1h avant le rendez-vous
+                
+                   $msg = "Bonjour " . $appointment->first_name . ", votre demande de rendez-vous avec le Dr " . $doctor_name .  " aura bien lieu aujourd'hui à ".$appointment->address. " à " . str_replace(":", "h", $appointment->time);
+                   $phone = $appointment->phone;
+
+                  file_get_contents("https://api-mapper.clicksend.com/http/v2/send.php?method=http&username=ronaldo.kana@isdg-sarl.com&key=A018CADB-8D14-F116-AD67-B0DFFE0990F5&to=" . $phone . "&source=Toobibs&message=" . urlencode($msg));
+             }
+	//	$time= Carbon::now()->addHours(1);
+	//	echo $time;
+	//	$bd_time=$appointment->time;
+	//	$time_converted=Carbon::parse($bd_time);
+	//	echo $time_converted->diffInHours($time);
+        }
+        
+    }
+}

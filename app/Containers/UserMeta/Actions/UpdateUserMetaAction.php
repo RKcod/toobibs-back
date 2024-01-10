@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Containers\UserMeta\Actions;
+
+use App\Ship\Parents\Actions\Action;
+use App\Ship\Parents\Requests\Request;
+use Apiato\Core\Foundation\Facades\Apiato;
+
+class UpdateUserMetaAction extends Action
+{
+  public function run(Request $request)
+  {
+    $data = [
+      'type' => $request->type,
+      'start_year' => $request->start_year,
+      'end_year' => $request->end_year,
+      'title' => $request->title,
+      'at' => $request->at,
+      'description' => $request->description,
+      'doctor_id' => $request->doctor_id,
+    ];
+    $data = array_filter($data);
+
+    $usermeta = Apiato::call('UserMeta@UpdateUserMetaTask', [$request->id, $data]);
+
+    return $usermeta;
+  }
+}
